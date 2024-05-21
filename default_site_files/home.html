@@ -1,0 +1,105 @@
+<div class="old-content">
+[OLD-HOME]
+</div>
+<div class="vg-content">
+    <!----------------------- New Listings Section ------------------>
+    <section id="listing-section" class="luxfullwidth lux-classic content-block listings"
+        style="padding-bottom: 40px; padding-top: 40px;">
+        <div class="inner-content">
+            <h1>[AREA] Homes for Sale</h1>
+            <div id="featured-three-slides"></div>
+        </div>
+    </section>
+    <!-------------------------------  MARKET STATS ------------------------------->
+    <section id="market-snapshots" class="content-block customSection atl-block">
+        <div class="inner-content" style="max-width: none; padding: 0!important;">
+            <div class="customTestimonials-content">
+                <div class="alt-header">
+                    <h2>[AREA] Real Estate Market</h2>
+                    <p>The [AREA] real estate market is always constantly changing. [BROKERAGE] is the
+                        source to ensure you stay informed, know the best times to sell &amp; buy, and help you make the
+                        best real estate decisions.</p>
+                </div>
+                <div class="market-slick-responsive-slider" style="height: 100%;">
+                    <div class="market-snapshot tile" style="height: 100%;">
+                        <div class="row">
+                            <div class="medium-4 columns">
+                                <div class="row">
+                                    <p class="averageLP">Loading...</p>
+                                    <h3>Median list price in [AREA]<span id="data-now"> for this month</span>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="medium-4 columns">
+                                <div class="row">
+                                    <p class="averageSP">Loading...</p>
+                                    <h3>Median sold price in [AREA] <span id="data-now"> for this month</span>
+                                    </h3>
+                                </div>
+                            </div>
+                            <div class="medium-4 columns">
+                                <div class="row">
+                                    <p class="averageDOM">Loading...</p>
+                                    <h3>Average Days on Market in [AREA]<span id="data-now"> for this
+                                            month</span></h3>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row second">
+                            <div class="medium-4 columns">
+                                <div class="row">
+                                    <p class="numberOfSL">Loading...</p>
+                                    <h3>Recently sold in [AREA]</h3>
+                                </div>
+                            </div>
+                            <div class="medium-4 columns">
+                                <div class="row">
+                                    <p class="numberOfNL">Loading...</p>
+                                    <h3>New properties in [AREA]</h3>
+                                </div>
+                            </div>
+                            <div class="medium-4 columns">
+                                <div class="row">
+                                    <p class="numberOfUL">Loading...</p>
+                                    <h3>Under contract in [AREA]</h3>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alt-cta"><a href="/search/market_report_search/"><button>Make Your Own Market Report
+                        </button></a></div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                marketSnap('county', '[AREA]')
+            })
+
+        </script>
+    </section>
+<!------------------------------- CUSTOM PAGE SCRIPT ------------------------------->
+<p style="display: none;">
+    <script>
+        if (a_x092969) {
+            var style = document.createElement('style');
+            style.type = 'text/css';
+            style.innerHTML = `
+        .miranda-wrapper .body-container {
+                padding-top: 0 !important;
+            }
+            .hoz-inside {
+                min-height:70vh!important
+            }
+            @media (max-width:1000px) {
+    .vg-content section:first-child {
+     padding-top:0px!important
+    }
+    }
+        `;
+            document.head.appendChild(style);
+
+            document.querySelector('.miranda-wrapper').classList.add('home');
+        }
+    </script>
+</p>

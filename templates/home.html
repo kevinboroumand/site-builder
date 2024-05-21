@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Vanity Geeks Site Builder{% endblock %}
+
+{% block body %}
+<body class="vg center">
+    <div class="container mt-5">
+        <h1>Vanity Geeks Site Builder</h1>
+        <br>
+        <div class="row">
+            <div class="col-md-6">
+                <h2>Create New Project</h2>
+                <button class="btn btn-primary" onclick="window.location.href='/create'">Create</button>
+            </div>
+            <div class="col-md-6">
+                <h2>Open Project</h2>
+                <div id="project_links">
+                    {% for folder, encoded_folder, edited in sorted_project_folders %}
+                    <a href="/project/{{ encoded_folder }}">
+                        {{ folder }}
+                        {% if edited %}
+                            <span class="text-muted">(Last Edited: {{ edited }})</span>
+                        {% endif %}
+                    </a>
+                    <br>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

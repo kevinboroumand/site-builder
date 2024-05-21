@@ -1,0 +1,399 @@
+{% extends "base.html" %}
+
+{% block title %}Project Details{% endblock %}
+
+{% block body %}
+
+<body class="vg">
+    <!---------------------- PROJECT ACTIONS -------------------->
+    <section class="d-flex flex-column gap-3">
+        <div class="container mt-5">
+            <h1>{{ project_data.get('Website', 'Project Details') }}</h1>
+        </div>
+        <div id="gather-options" class="text-center p-3 border container">
+            <h2>Available IDX Fields</h2>
+            <div id="progress-options" class="spinner-border text-primary" role="status" style="display: none;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <!-- Options will be populated here -->
+            <div id="options-container">
+            </div>
+            <button id="gather-options-btn" class="btn btn-primary mt-3" onclick="gatherOptions(this)"
+                data-directory="{{ project_data.get('Directory', '') }}">Gather Options</button>
+
+        </div>
+        <!---------------------- Project Criteria -------------------->
+        <div id="project-criteria" class="text-center p-3 border container">
+            <span id="status"
+                class="badge rounded-pill {{ 'complete' if completion_status == 'Completed' else 'notcomplete' }}">{{
+                completion_status }}</span>
+            <h2>Process IDX Data</h2>
+            <button class="btn btn-primary" onclick="processIDX(this)"
+                data-directory="{{ project_data.get('Directory', '') }}" {{ 'disabled' if completion_status=='Completed'
+                else '' }}>Start</button>
+        </div>
+        <!---------------------- Process IDX -------------------->
+        <div id="process-idx" class="text-center p-3 border container">
+            <span id="status"
+                class="badge rounded-pill {{ 'complete' if completion_status == 'Completed' else 'notcomplete' }}">{{
+                completion_status }}</span>
+            <h2>Process IDX Data</h2>
+            <button class="btn btn-primary" onclick="processIDX(this)"
+                data-directory="{{ project_data.get('Directory', '') }}" {{ 'disabled' if completion_status=='Completed'
+                else '' }}>Start</button>
+        </div>
+    </section>
+    <!---------------------- PROJECT INFORMATION FORM -------------------->
+    <section class="bg-light frm">
+        <div class="container mt-5">
+            <h1>Project Information</h1>
+            <form id="projectForm" method="POST" action="/update_project/{{ project_data['Project ID'] }}">
+                <!-- Populate form fields with project data -->
+                <div class="form-group">
+                    <label for="projectId">Project ID</label>
+                    <input type="text" class="form-control" id="projectId" name="Project ID"
+                        value="{{ project_data.get('Project ID', '') }}" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="website">Website</label>
+                    <input type="text" class="form-control" id="website" name="Website"
+                        value="{{ project_data.get('Website', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="directory">Directory</label>
+                    <input type="text" class="form-control" id="directory" name="Directory"
+                        value="{{ project_data.get('Directory', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" class="form-control" id="firstName" name="First Name"
+                        value="{{ project_data.get('First Name', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" class="form-control" id="lastName" name="Last Name"
+                        value="{{ project_data.get('Last Name', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" class="form-control" id="email" name="Email"
+                        value="{{ project_data.get('Email', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone</label>
+                    <input type="tel" class="form-control" id="phone" name="Phone"
+                        value="{{ project_data.get('Phone', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="brokerage">Brokerage</label>
+                    <input type="text" class="form-control" id="brokerage" name="Brokerage"
+                        value="{{ project_data.get('Brokerage', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="mainArea">Main Area</label>
+                    <input type="text" class="form-control" id="mainArea" name="Main Area"
+                        value="{{ project_data.get('Main Area', '') }}">
+                </div>
+                <div class="form-group">
+                    <label for="mainState">Main State</label>
+                    <input type="text" class="form-control" id="mainState" name="Main State"
+                        value="{{ project_data.get('Main State', '') }}">
+                </div>
+                <!-- Add other form fields here -->
+                <input type="hidden" name="encoded_folder" value="{{ encoded_folder }}">
+                <button id="updateBtn" class="btn btn-primary" disabled>Update</button>
+            </form>
+    </section>
+    </div>
+</body>
+<script>
+    function getClientData() {
+        var directory = document.getElementById('gather-options-btn').getAttribute('data-directory');
+        var firstName = document.getElementById('firstName').value;
+        var lastName = document.getElementById('lastName').value;
+        var website = document.getElementById('website').value;
+        var projectId = document.getElementById('projectId').value;
+        var folder = `${firstName} ${lastName} — ${website}, #${projectId}`;
+        var encodedFolder = encodeURIComponent(folder);
+
+        return { directory, firstName, lastName, website, projectId, folder, encodedFolder };
+    }
+    function processIDX(button) {
+        var { directory, encodedFolder } = getClientData();
+        fetch(`/process_idx/${directory}?encoded_folder=${encodedFolder}`, {
+            method: 'POST',
+            body: JSON.stringify({ directory: directory, encoded_folder: encodedFolder }), // Include encoded_folder in the POST body
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            toggleSpinner(false); // Hide spinner after processing IDX
+            if (data.status === 'success') {
+                // Update UI or handle success
+            } else {
+                // Handle error
+            }
+        })
+        .catch(error => {
+            toggleSpinner(false);
+            console.error('Error processing IDX data:', error);
+            // Handle error
+        });
+    }
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to gather options
+
+        window.gatherOptions = function (button) {
+            var { directory, encodedFolder } = getClientData();
+            var progressElement = document.getElementById('progress-options');
+            progressElement.style.display = 'block'; // Show progress
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            fetch(`/gatheroptions/${directory}?encoded_folder=${encodedFolder}`, {
+                method: 'POST',
+                body: JSON.stringify({ directory: directory, encoded_folder: encodedFolder }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    progressElement.style.display = 'none'; // Hide progress
+                    if (data && data.main_options && data.other_options) {
+                        // container.innerHTML = ''; // Clear previous options
+                        fetchExistingOptions(); // Call fetchExistingOptions after successful data gathering
+                        addOptions(data.main_options, 'main-option');
+                        addOptions(data.other_options, 'other-option');
+                        console.log(data.result.message);
+                        document.getElementById('gather-options-btn').textContent = 'Gather Data Again';
+
+                    } else {
+                        throw new Error('Data is not in the expected format or missing.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    progressElement.style.display = 'none'; // Ensure progress is hidden on error
+                });
+        };
+
+
+
+        function addOptions(options, className) {
+            const container = document.getElementById('options-container');
+            options.forEach((optionObj, index) => {
+                const option = optionObj.Name; // Assuming option objects have a 'Name' property
+                const optionType = className.includes('main') ? 'main' : 'other';
+                const optionId = `option-${className}-${index}-${option.replace(/\s+/g, '-').toLowerCase()}`;
+
+                const input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = optionId;
+                input.name = 'options';
+                input.value = option; // Use the option name here
+
+                const label = document.createElement('label');
+                label.htmlFor = optionId;
+                label.textContent = option; // Use the option name for the label
+
+                const div = document.createElement('div');
+                div.className = `${className} mb-2`;
+                div.appendChild(input);
+                div.appendChild(label);
+                container.appendChild(div);
+                // Immediately handle checkbox state based on the 'Active?' property
+                if (optionObj['Active?'].toUpperCase() === 'YES') {
+                    input.checked = true;
+                }
+
+                input.addEventListener('change', function () {
+                    console.log(`Checkbox change detected for ${optionType}: ${option}`);
+                    updateOptionStatus(option, this.checked ? "Yes" : "No", optionType); // Ensure optionType is correctly determined
+                });
+            });
+        }
+
+        function fetchExistingOptions() {
+            var { directory, encodedFolder } = getClientData();
+
+            // Clear existing options before fetching new ones
+            const container = document.getElementById('options-container');
+            container.innerHTML = ''; // This line clears the container
+
+            fetch(`/checkoptions/${directory}?encoded_folder=${encodedFolder}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.main_options && data.main_options.length > 0) {
+                        console.log('Main options received:', data.main_options);
+                        addOptions(data.main_options, 'main-option');
+                    }
+                    if (data.other_options && data.other_options.length > 0) {
+                        console.log('Other options received:', data.other_options);
+                        addOptions(data.other_options, 'other-option');
+                    }
+
+                    // Reapply CSV status checks after repopulating options
+                    checkActiveOptions('main-option', data.main_options);
+                    checkActiveOptions('other-option', data.other_options);
+
+                    const button = document.getElementById('gather-options-btn');
+                    button.textContent = data.main_options.length > 0 || data.other_options.length > 0 ? 'Gather Data Again' : 'Gather Options';
+                })
+                .catch(error => console.error('Fetch error:', error));
+        }
+
+        function processIDX(button) {
+            var { directory, encodedFolder } = getClientData();
+            toggleSpinner(true);
+            // Process IDX
+            fetch(`/process_idx/${directory}?encoded_folder=${encodedFolder}`, {
+                method: 'POST',
+                body: JSON.stringify({ directory: directory, encoded_folder: encodedFolder }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        // Update UI or handle success
+                    } else {
+                        // Handle error
+                    }
+                })
+                .catch(error => {
+                    console.error('Error processing IDX data:', error);
+                });
+        }
+
+
+        function updateOptionStatus(option, status, optionType) {
+            var { directory, encodedFolder } = getClientData();
+            fetch(`/update_option_status?encoded_folder=${encodedFolder}&option_name=${encodeURIComponent(option)}&status=${status}&option_type=${optionType}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    option_name: option,
+                    status: status,
+                    option_type: optionType
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Server response for updating option status:', data);
+                })
+                .catch(error => {
+                    console.error('Error while updating option status:', error);
+                });
+        }
+
+
+        function checkActiveOptions(optionType, options) {
+            options.forEach(option => {
+                console.log(option); // Log the option object
+                const checkbox = document.querySelector(`div.${optionType} input[value="${option['Name']}"]`);
+                if (checkbox) {
+                    console.log(`Found checkbox for ${optionType}:`, checkbox);
+                    // Check the 'Active?' column
+                    console.log(`Active?: ${option['Active?']}`);
+                    if (option['Active?'].toUpperCase() === 'YES') { // Ensure 'YES' is uppercase
+                        checkbox.checked = true;
+                        console.log(`Checked ${option['Name']} for ${optionType}`);
+                    }
+                } else {
+                    console.log(`Checkbox for ${option['Name']} not found for ${optionType}`);
+                }
+            });
+        }
+
+
+
+
+
+        window.onload = function () {
+            console.log('Page loaded. Fetching existing options...');
+            fetchExistingOptions();
+        };
+
+
+
+
+
+    });
+
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(function () {
+            var optionsContainer = document.getElementById('options-container');
+
+            // Check if optionsContainer exists before proceeding
+            if (optionsContainer && optionsContainer.children.length > 0) {
+                var expandButton = document.createElement('button');
+                expandButton.textContent = 'See All Options';
+                expandButton.classList.add('expand-button');
+                expandButton.addEventListener('click', toggleContainerHeight);
+
+                // Append the button after optionsContainer
+                optionsContainer.insertAdjacentElement('afterend', expandButton);
+
+                checkContainerHeight();
+
+
+                function checkContainerHeight() {
+                    if (optionsContainer.clientHeight > 400) {
+                        optionsContainer.classList.add('condensed');
+                        addGradientOverlay();
+                    } else {
+                        optionsContainer.classList.remove('condensed');
+                        removeGradientOverlay();
+                    }
+                }
+
+                function toggleContainerHeight() {
+                    optionsContainer.classList.toggle('expanded');
+                    if (optionsContainer.classList.contains('expanded')) {
+                        expandButton.textContent = 'Collapse';
+                        removeGradientOverlay();
+                    } else {
+                        expandButton.textContent = 'See All Options';
+                        if (optionsContainer.clientHeight > 400) {
+                            addGradientOverlay();
+                        }
+                    }
+                }
+
+                function addGradientOverlay() {
+                    var overlay = document.createElement('div');
+                    overlay.classList.add('overlay-gradient');
+                    optionsContainer.appendChild(overlay);
+                }
+
+                function removeGradientOverlay() {
+                    var overlay = document.querySelector('.overlay-gradient');
+                    if (overlay) {
+                        optionsContainer.removeChild(overlay);
+                    }
+                }
+            }
+
+        }, 300); // 100 milliseconds delay
+    });
+</script>
+
+
+
+
+
+
+
+
+{% endblock %}
