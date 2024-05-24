@@ -6,8 +6,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 def login(directory, headless=False):
-    username = REDACTED;
-    password = REDACTED;
+    username = 'REDACTED';
+    password = 'REDACTED';
     chromedriver_path = '/Users/kevinboroumand/Library/CloudStorage/OneDrive-Personal/repos/Site Builder/Chrome Driver/chromedriver'
     
     chrome_options = Options()

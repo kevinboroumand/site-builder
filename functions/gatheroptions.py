@@ -14,7 +14,7 @@ from selenium import webdriver
 LOGGER.setLevel(logging.WARNING)
 
 def gatheroptions(directory, encoded_folder, base_dir):
-    driver = login(directory, headless=True)  # Make sure the login function is defined elsewhere
+    driver = login(directory, headless=False)  # Make sure the login function is defined elsewhere
     wait = WebDriverWait(driver, 10)
     
 
@@ -24,7 +24,7 @@ def gatheroptions(directory, encoded_folder, base_dir):
     time.sleep(2)
 
     try:
-        driver.get(f"http://www.{directory}.realgeeks.com/admin/content/contentpage/add/")
+        driver.get(f"http://{directory}.realgeeks.com/admin/content/contentpage/add/")
         time.sleep(1)
         
         openUp = wait.until(EC.presence_of_element_located((By.ID, "fieldsetcollapser3")))
