@@ -6,9 +6,9 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 
 def login(directory, headless=False):
-    username = "kevin@vanitygeeks.com"
-    password = "Pspmaster1!"
-    chromedriver_path = '/Users/kevinboroumand/Library/CloudStorage/OneDrive-Personal/repos/Automation/Chrome Driver/chromedriver'
+    username = REDACTED;
+    password = REDACTED;
+    chromedriver_path = '/Users/kevinboroumand/Library/CloudStorage/OneDrive-Personal/repos/Site Builder/Chrome Driver/chromedriver'
     
     chrome_options = Options()
     chrome_options.add_argument('--ignore-certificate-errors')
